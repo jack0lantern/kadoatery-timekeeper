@@ -30,7 +30,6 @@
     var lastRf = localStorage.getItem(KADS_META_KEY) ? JSON.parse(localStorage.getItem(KADS_META_KEY)): {};
     var kadsMeta = {};
     var foods = [];
-    var rfTime = $('#nst').html();
     var epochTime = new Date().getTime();
 
     function formatMinsOnly(t) {
@@ -154,8 +153,8 @@
 
     function filterBlacklist(listString) {
         // Neoboards filters certain words. Work around by adding a . after the first letter
-        var whitelist = ["weed", "cracker", "balls", "rape", "cum"];
-        whitelist.forEach(function(d) {
+        var blacklist = ["weed", "cracker", "balls", "rape", "cum", "onion"];
+        blacklist.forEach(function(d) {
             var re = new RegExp(d, 'gi');
             listString = listString.replace(re, d[0] + '.' + d.substring(1));
         })
@@ -245,7 +244,9 @@
  initial time set for main and mini
 
  main refresh
- - current: all unfed OR all new names
+ - current: > 3 unfed OR > 3 new names EXCEPT kads remaining from last refresh
+ could do all unfed OR all new names, but 
+  fails if a new kad replaces an old kad with the same name and gets fed before the user refreshes
  update time for main
 
  main refresh, no change
@@ -253,8 +254,8 @@
   - no time update
 
  main refresh, missed
-  - previous: > 3 names different from current AND in time window AND > 0 unfed
-  - time update, but labeled missed
+  - previous: > 3 names different from current AND > 0 fed
+  - time update, but labeled missed if all fed. otherwise, label partial miss?
 
  mini refresh (repeatable)
   - current: <=3 unfed OR <=3 new names
@@ -266,7 +267,8 @@
   - no time update
 
  mini refresh, missed
-  - previous: x <= 3 names different from current AND < x unfed
+  - previous: x <= 3 names different from current AND all fed
   - time update, but labeled missed
+  if < x unfed, is a partial miss
 
  */
