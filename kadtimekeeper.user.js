@@ -49,10 +49,14 @@
             hour12: true,
         };
         const pacificTimeFormatter = new Intl.DateTimeFormat('en-US', options);
-        const [{ value: month }, , { value: day }, , { value: year }, , { value: hour }, , { value: minute }, , { value: second }, , {value: dayPeriod}] = pacificTimeFormatter.formatToParts(date);
+        const parts = pacificTimeFormatter.formatToParts(date);
+        const partMap = {};
+        parts.forEach(({ type, value }) => {
+            partMap[type] = value;
+        });
 
         // Format the date and time as a string
-        const pacificTimeString = `${hour}:${minute} ${dayPeriod}`;
+        const pacificTimeString = `${partMap.hour}:${partMap.minute} ${partMap.dayPeriod}`;
 
         return pacificTimeString;
     }
@@ -62,7 +66,7 @@
     }
 
     function addMinutes(t, minutes) {
-        return t + minutes * 60 * 1000
+        return t + minutes * 60 * 1000;
     }
 
     console.log("Running kad helper");
